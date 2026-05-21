@@ -6,7 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="theme-color" content="#f6f3ed" />
-  <link rel="apple-touch-icon" href="icon.png">
   <title>Rosario</title>
 
   <style>
@@ -20,6 +19,9 @@
       --btn: #ffffff;
       --btn-line: rgba(28, 28, 30, 0.12);
       --shadow: 0 10px 30px rgba(28, 28, 30, 0.05);
+      --error-bg: #fff0f0;
+      --error-border: #f3b6b6;
+      --error-text: #7a1f1f;
     }
 
     html, body {
@@ -150,6 +152,18 @@
       font-size: 12px;
       color: var(--muted);
     }
+
+    .errorbox {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 
@@ -164,17 +178,21 @@
       <button class="ghost" id="refreshBtn" type="button">Aggiorna</button>
     </header>
 
+    <div id="errorbox" class="errorbox"></div>
     <section id="cards" class="cards" aria-label="Testo del giorno"></section>
 
     <p class="note">Gli audio partono solo con un tap, così restano discreti e affidabili su iPhone.</p>
   </main>
 
   <script>
-    // Mappatura:
-    // 1 = Misteri Gaudiosi (lunedì e sabato)
-    // 2 = Misteri Dolorosi (martedì e venerdì)
-    // 3 = Misteri Gloriosi (mercoledì e domenica)
-    // 4 = Misteri Luminosi (giovedì)
+    window.addEventListener("error", (event) => {
+      const box = document.getElementById("errorbox");
+      box.style.display = "block";
+      box.textContent = "Errore JavaScript nel file:
+" + event.message + (event.lineno ? `
+Linea: ${event.lineno}` : "");
+      document.getElementById("title").textContent = "Errore di caricamento";
+    });
 
     const DAY_NAMES = [
       "Domenica", "Lunedì", "Martedì", "Mercoledì",
@@ -231,7 +249,7 @@
         },
         {
           title: "3. Giovanni 19,2-6",
-          text: `I soldati intrecciarono una corona di spine, gliela posero sul capo egli misero addosso un mantello di porpora. Poi gli si avvicinavano e dicevano: "Salve, re dei Giudei!". E gli davano schiaffi. Pilato uscì fuori di nuovo e disse loro: "Ecco, io ve lo conduco fuori, perché sappiate che non trovo in lui colpa alcuna". Allora Gesù uscì, portando la corona di spine e il mantello di porpora. E Pilato disse loro: "Ecco l'uomo!".",
+          text: `I soldati intrecciarono una corona di spine, gliela posero sul capo e gli misero addosso un mantello di porpora. Poi gli si avvicinavano e dicevano: "Salve, re dei Giudei!". E gli davano schiaffi. Pilato uscì fuori di nuovo e disse loro: "Ecco, io ve lo conduco fuori, perché sappiate che non trovo in lui colpa alcuna". Allora Gesù uscì, portando la corona di spine e il mantello di porpora. E Pilato disse loro: "Ecco l'uomo!".",
           audio: "Do3_Gv 19_2-6.mp3"
         },
         {
@@ -263,7 +281,7 @@
         },
         {
           title: "4. Luca 1,46-50",
-          text: `L'anima mia magnifica il Signore e il mio spirito esulta in Dio, mio salvatore, perché ha guardato l'umiltà della sua serva. D'ora in poi tutte le generazioni mi chiameranno beata. Grandi cose ha fatto in me l` + "`" + `Onnipotente e Santo è il suo nome: di generazione in generazione la sua misericordia si stende su quelli che lo temono.",
+          text: `L'anima mia magnifica il Signore e il mio spirito esulta in Dio, mio salvatore, perché ha guardato l'umiltà della sua serva. D'ora in poi tutte le generazioni mi chiameranno beata. Grandi cose ha fatto in me l'Onnipotente e Santo è il suo nome: di generazione in generazione la sua misericordia si stende su quelli che lo temono.",
           audio: "Gl4_Lc 1_46-50.mp3"
         },
         {
@@ -295,7 +313,7 @@
         },
         {
           title: "5. Matteo 26,17-19.26-28",
-          text: `Il primo giorno degli Azzimi, i discepoli si avvicinarono a Gesù e gli dissero: "Dove vuoi che prepariamo per te, perché tu possa mangiare la Pasqua?". Ed egli rispose: "Andate in città da un tale e ditegli: "Il Maestro dice: Il mio tempo è vicino; farò la Pasqua da te con i miei discepoli"". I discepoli fecero come aveva loro ordinato Gesù, e prepararono la Pasqua. Ora, mentre mangiavano, Gesù prese il pane, recitò la benedizione, lo spezzò e, mentre lo dava ai discepoli, disse: "Prendete, mangiate: questo è il mio corpo". Poi prese il calice, rese grazie e lo diede loro, dicendo: "Bevetene tutti, perché questo è il mio sangue dell'alleanza, che è versato per molti per il perdono dei peccati.”`,
+          text: `Il primo giorno degli Azzimi, i discepoli si avvicinarono a Gesù e gli dissero: "Dove vuoi che prepariamo per te, perché tu possa mangiare la Pasqua?". Ed egli rispose: "Andate in città da un tale e ditegli: "Il Maestro dice: Il mio tempo è vicino; farò la Pasqua da te con i miei discepoli"". I discepoli fecero come aveva loro ordinato Gesù, e prepararono la Pasqua. Ora, mentre mangiavano, Gesù prese il pane, recitò la benedizione, lo spezzò e, mentre lo dava ai discepoli, disse: "Prendete, mangiate: questo è il mio corpo". Poi prese il calice, rese grazie e lo diede loro, dicendo: "Bevetene tutti, perché questo è il mio sangue dell'alleanza, che è versato per molti per il perdono dei peccati."`,
           audio: "Lu5_Mt 26_17-19.26-28.mp3"
         }
       ]
