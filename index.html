@@ -1,456 +1,230 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="theme-color" content="#f6f3ed" />
-  <title>Rosario</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Rosario">
+    <link rel="apple-touch-icon" href="icon.png" />
+    <title>Rosario del Giorno</title>
+    <style>
+        :root {
+            --bg-color: #f2f2f7;
+            --text-color: #000000;
+            --card-bg: #ffffff;
+            --accent-color: #007aff;
+            --secondary-text: #6c757d;
+        }
 
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #f6f3ed;
-      --card: rgba(255, 255, 255, 0.78);
-      --text: #1c1c1e;
-      --muted: #6b7280;
-      --line: rgba(28, 28, 30, 0.08);
-      --btn: #ffffff;
-      --btn-line: rgba(28, 28, 30, 0.12);
-      --shadow: 0 10px 30px rgba(28, 28, 30, 0.05);
-      --error-bg: #fff0f0;
-      --error-border: #f3b6b6;
-      --error-text: #7a1f1f;
-    }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --text-color: #ffffff;
+                --card-bg: #1c1c1e;
+                --accent-color: #0a84ff;
+                --secondary-text: #aeaeb2;
+            }
+        }
 
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    body {
-      padding:
-        max(12px, env(safe-area-inset-top))
-        max(12px, env(safe-area-inset-right))
-        max(18px, env(safe-area-inset-bottom))
-        max(12px, env(safe-area-inset-left));
-    }
+        header {
+            padding: 24px 8px 16px 8px;
+        }
 
-    .app {
-      max-width: 760px;
-      margin: 0 auto;
-      min-height: calc(100svh - 30px);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+        h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
 
-    .topbar {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 6px 2px 2px;
-    }
+        h2.day-subtitle {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin: 4px 0 0 0;
+        }
 
-    .eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
 
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      line-height: 1.05;
-      font-weight: 700;
-      text-transform: capitalize;
-    }
+        .mystery-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .meta {
-      margin: 4px 0 0;
-      font-size: 14px;
-      color: var(--muted);
-    }
+        .mystery-text {
+            font-size: 17px;
+            line-height: 1.5;
+            margin: 0 0 20px 0;
+        }
 
-    .ghost {
-      min-height: 44px;
-      padding: 0 14px;
-      border-radius: 999px;
-      border: 1px solid var(--btn-line);
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      touch-action: manipulation;
-    }
+        .audio-btn {
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s;
+        }
 
-    .cards {
-      display: grid;
-      gap: 12px;
-      padding-bottom: 8px;
-    }
+        .audio-btn:active {
+            opacity: 0.7;
+        }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 16px;
-    }
-
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
-      line-height: 1.2;
-      font-weight: 700;
-    }
-
-    .paragraph {
-      margin: 0;
-      font-size: 19px;
-      line-height: 1.6;
-      letter-spacing: 0.01em;
-      white-space: pre-wrap;
-    }
-
-    .actions {
-      margin-top: 12px;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .audio-btn {
-      min-height: 44px;
-      padding: 0 14px;
-      border-radius: 999px;
-      border: 1px solid var(--btn-line);
-      background: var(--btn);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      touch-action: manipulation;
-    }
-
-    .audio-btn:active,
-    .ghost:active {
-      transform: scale(0.98);
-    }
-
-    .note {
-      margin: 2px 2px 0;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .errorbox {
-      display: none;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: var(--error-bg);
-      border: 1px solid var(--error-border);
-      color: var(--error-text);
-      font-size: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-  </style>
+        .audio-btn.playing {
+            background-color: var(--accent-color);
+            color: #ffffff;
+        }
+    </style>
 </head>
-
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">Meditazione di oggi</div>
-        <h1 id="title">Caricamento…</h1>
-        <p class="meta" id="meta"></p>
-      </div>
-      <button class="ghost" id="refreshBtn" type="button">Aggiorna</button>
+
+    <header>
+        <h1>Rosario di Oggi</h1>
+        <h2 id="day-subtitle" class="day-subtitle">Caricamento...</h2>
     </header>
 
-    <div id="errorbox" class="errorbox"></div>
-    <section id="cards" class="cards" aria-label="Testo del giorno"></section>
+    <main id="content"></main>
 
-    <p class="note">Gli audio partono solo con un tap, così restano discreti e affidabili su iPhone.</p>
-  </main>
+    <script>
+        const rosarioData = {
+            gaudiosi: {
+                title: "Misteri Gaudiosi",
+                mysteries: [
+                    { sub: "1. Luca 1,28-34", text: "Entrando da lei, disse: \"Rallégrati, piena di grazia: il Signore è con te\". A queste parole ella fu molto turbata e si domandava che senso avesse un saluto come questo. L'angelo le disse: \"Non temere, Maria, perché hai trovato grazia presso Dio. Ed ecco, concepirai un figlio, lo darai alla luce e lo chiamerai Gesù. Sarà grande e verrà chiamato Figlio dell'Altissimo; il Signore Dio gli darà il trono di Davide suo padre e regnerà per sempre sulla casa di Giacobbe e il suo regno non avrà fine”. Allora Maria disse all'angelo: \"Come avverrà questo, poiché non conosco uomo?\".", audio: "audio/Ga1_Lc 1_28-34.mp3" },
+                    { sub: "2. Luca 1,38-43", text: "Allora Maria disse: \"Ecco la serva del Signore: avvenga per me secondo la tua parola\". E l'angelo si allontanò da lei. In quei giorni Maria si alzò e andò in fretta verso la regione montuosa, in una città di Giuda. Entrata nella casa di Zaccaria, salutò Elisabetta. Appena Elisabetta ebbe udito il saluto di Maria, il bambino sussultò nel suo grembo. Elisabetta fu colmata di Spirito Santo ed esclamò a gran voce: “Benedetta tu fra le donne e benedetto il frutto del tuo grembo! A che cosa devo che la madre del mio Signore venga da me?”.", audio: "audio/Ga2_Lc 1_38-43.mp3" },
+                    { sub: "3. Luca 2,7-20", text: "(Maria) Diede alla luce il suo figlio primogenito, lo avvolse in fasce e lo pose in una mangiatoia, perché per loro non c'era posto nell'alloggio. C'erano in quella regione alcuni pastori che, pernottando all'aperto, vegliavano tutta la notte facendo la guardia al loro gregge. Un angelo del Signore si presentò a loro e la gloria del Signore li avvolse di luce. Essi furono presi da grande timore, ma l'angelo disse loro: \"Non temete: ecco, vi annuncio una grande gioia, che sarà di tutto il popolo: oggi, nella città di Davide, è nato per voi un Salvatore, che è Cristo Signore. Questo per voi il segno: troverete un bambino avvolto in fasce, adagiato in una mangiatoia\". E subito apparve con l'angelo una moltitudine dell'esercito celeste, che lodava Dio e diceva: \"Gloria a Dio nel più alto dei cieli e sulla terra pace agli uomini, che egli ama\". Appena gli angeli si furono allontanati da loro, verso il cielo, i pastori dicevano l'un l'altro: \"Andiamo dunque fino a Betlemme, vediamo questo avvenimento che il Signore ci ha fatto conoscere\". Andarono, senza indugio, e trovarono Maria e Giuseppe e il bambino, adagiato nella mangiatoia. E dopo averlo visto, riferirono ciò che del bambino era stato detto loro. Tutti quelli che udivano si stupirono delle cose dette loro dai pastori. Maria, da parte sua, custodiva tutte queste cose, meditandole nel suo cuore. I pastori se ne tornarono, glorificando e lodando Dio per tutto quello che avevano udito e visto, com'era stato detto loro.", audio: "audio/Ga3_Lc 2_7-20.mp3" },
+                    { sub: "4. Luca 2,25-30", text: "Ora a Gerusalemme c'era un uomo di nome Simeone, uomo giusto e pio, che aspettava la consolazione d'Israele, e lo Spirito Santo era su di lui. Lo Spirito Santo gli aveva preannunciato che non avrebbe visto la morte senza prima aver veduto il Cristo del Signore. Mosso dallo Spirito, (Simeone) si recò al tempio e, mentre i genitori vi portavano il Bambino Gesù per fare ciò che la Legge prescriveva a suo riguardo, anch'egli lo accolse tra le braccia e benedisse Dio, dicendo: \"Ora lascia, o Signore, che il tuo servo vada in pace, secondo la tua parola, perché i miei occhi hanno visto la tua salvezza”.", audio: "audio/Ga4_Lc 2_25-30.mp3" },
+                    { sub: "5. Luca 2,45-49", text: "Non avendolo trovato, tornarono in cerca di lui a Gerusalemme. Dopo tre giorni lo trovarono nel tempio, seduto in mezzo ai maestri, mentre li ascoltava e li interrogava. E tutti quelli che l'udivano erano pieni di stupore per la sua intelligenza e le sue risposte. Al vederlo restarono stupiti, e sua madre gli disse: \"Figlio, perché ci hai fatto questo? Ecco, tuo padre e io, angosciati, ti cercavamo\". Ed egli rispose loro: \"Perché mi cercavate? Non sapevate che io devo occuparmi delle cose del Padre mio?\".", audio: "audio/Ga5_Lc 2_45-49.mp3" }
+                ]
+            },
+            dolorosi: {
+                title: "Misteri Dolorosi",
+                mysteries: [
+                    { sub: "1. Luca 22,39-46", text: "Uscì e andò, come al solito, al monte degli Ulivi; anche i discepoli lo seguirono. Giunto sul luogo, disse loro: \"Pregate, per non entrare in tentazione\". Poi si allontanò da loro circa un tiro di sasso, cadde in ginocchio e pregava dicendo: \"Padre, se vuoi, allontana da me questo calice! Tuttavia non sia fatta la mia, ma la tua volontà\". Gli apparve allora un angelo dal cielo per confortarlo. Entrato nella lotta, pregava più intensamente, e il suo sudore diventò come gocce di sangue che cadono a terra. Poi, rialzatosi dalla preghiera, andò dai discepoli e li trovò che dormivano per la tristezza. E disse loro: \"Perché dormite? Alzatevi e pregate, per non entrare in tentazione\".", audio: "audio/Do1_Lc 22_39-46.mp3" },
+                    { sub: "2. Giovanni 18,33-40; 19,1", text: "Pilato allora rientrò nel pretorio, fece chiamare Gesù e gli disse: \"Sei tu il re dei Giudei?\". Gesù rispose: \"Dici questo da te, oppure altri ti hanno parlato di me?\". Pilato disse: \"Sono forse io Giudeo? La tua gente e i capi dei sacerdoti ti hanno consegnato a me. Che cosa hai fatto?\". Rispose Gesù: \"Il mio regno non è di questo mondo; se il mio regno fosse di questo mondo, i miei servitori avrebbero combattuto perché non fossi consegnato ai Giudei; ma il mio regno non è di quaggiù\". Allora Pilato gli disse: \"Dunque tu sei re?\". Rispose Gesù: \"Tu lo dici: io sono re. Per questo io sono nato e per questo sono venuto nel mondo: per dare testimonianza alla verità. Chiunque è dalla verità, ascolta la mia voce\". Gli dice Pilato: \"Che cos'è la verità?\". E, detto questo, uscì di nuovo verso i Giudei e disse loro: \"Io non trovo in lui colpa alcuna. Vi è tra voi l'usanza che, in occasione della Pasqua, io rimetta uno in libertà per voi: volete dunque che io rimetta in libertà per voi il re dei Giudei?\". Allora essi gridarono di nuovo: \"Non costui, ma Barabba!\". Barabba era un brigante. Pilato allora fece prendere Gesù e lo fece flagellare.", audio: "audio/Do2_Gv 18_33-40_19_1.mp3" },
+                    { sub: "3. Giovanni 19,2-6", text: "I soldati intrecciarono una corona di spine, gliela posero sul capo egli misero addosso un mantello di porpora. Poi gli si avvicinavano e dicevano: \"Salve, re dei Giudei!\". E gli davano schiaffi. Pilato uscì fuori di nuovo e disse loro: \"Ecco, io ve lo conduco fuori, perché sappiate che non trovo in lui colpa alcuna\". Allora Gesù uscì, portando la corona di spine e il mantello di porpora. E Pilato disse loro: \"Ecco l'uomo!\".", audio: "audio/Do3_Gv 19_2-6.mp3" },
+                    { sub: "4. Luca 23,20-26", text: "Pilato parlò loro di nuovo, perché voleva rimettere in libertà Gesù. Ma essi urlavano: \"Crocifiggilo! Crocifiggilo!\". Ed egli, per la terza volta, disse loro: \"Ma che male ha fatto costui? Non ho trovato in lui nulla che meriti la morte. Dunque, lo punirò e lo rimetterò in libertà\". Essi però insistevano a gran voce, chiedendo che venisse crocifisso, e le loro grida crescevano. Pilato allora decise che la loro richiesta venisse eseguita. Rimise in libertà colui che era stato messo in prigione per rivolta e omicidio, e che essi richiedevano, e consegnò Gesù al loro volere. Mentre lo conducevano via, fermarono un certo Simone di Cirene, che tornava dai campi, e gli misero addosso la croce, da portare dietro a Gesù.", audio: "audio/Do4_Lc 23_20-26.mp3" },
+                    { sub: "5. Luca 23,39-46", text: "Uno dei malfattori appesi alla croce lo insultava: \"Non sei tu il Cristo? Salva te stesso e noi!\". L'altro invece lo rimproverava dicendo: \"Non hai alcun timore di Dio, tu che sei condannato alla stessa pena? Noi, giustamente, perché riceviamo quello che abbiamo meritato per le nostre azioni; egli invece non ha fatto nulla di male\". E disse: \"Gesù, ricordati di me quando entrerai nel tuo regno\". Gli rispose: \"In verità io ti dico: oggi con me sarai nel paradiso\". Era già verso mezzogiorno e si fece buio su tutta la terra fino alle tre del pomeriggio, perché il sole si era eclissato. Il velo del tempio si squarciò a metà. Gesù, gridando a gran voce, disse: \"Padre, nelle tue mani consegno il mio spirito\". Detto questo, spirò.", audio: "audio/Do5_Lc 23_39-46.mp3" }
+                ]
+            },
+            gloriosi: {
+                title: "Misteri Gloriosi",
+                mysteries: [
+                    { sub: "1. Giovanni 20,11-18", text: "Maria invece stava all'esterno, vicino al sepolcro, e piangeva. Mentre piangeva, si chinò verso il sepolcro e vide due angeli in bianche vesti, seduti l'uno dalla parte del capo e l'altro dei piedi, dove era stato posto il corpo di Gesù. Ed essi le dissero: \"Donna, perché piangi?\". Rispose loro: \"Hanno portato via il mio Signore e non so dove l'hanno posto\". Detto questo, si voltò indietro e vide Gesù, in piedi; ma non sapeva che fosse Gesù. Le disse Gesù: \"Donna, perché piangi? Chi cerchi?\". Ella, pensando che fosse il custode del giardino, gli disse: \"Signore, se l'hai portato via tu, dimmi dove l'hai posto e io andrò a prenderlo\". Gesù le disse: \"Maria!\". Ella si voltò e gli disse in ebraico: \"Rabbunì!\" - che significa: \"Maestro!\". Gesù le disse: \"Non mi trattenere, perché non sono ancora salito al Padre; ma va' dai miei fratelli e di' loro: \"Salgo al Padre mio e Padre vostro, Dio mio e Dio vostro\". Maria di Màgdala andò ad annunciare ai discepoli: \"Ho visto il Signore!\" e ciò che le aveva detto.", audio: "audio/Gl1_Gv 20_11-18.mp3" },
+                    { sub: "2. Atti 1,6-11", text: "Quelli dunque che erano con lui gli domandavano: \"Signore, è questo il tempo nel quale ricostituirai il regno per Israele?\". Ma egli rispose: \"Non spetta a voi conoscere tempi o momenti che il Padre ha riservato al suo potere, ma riceverete la forza dallo Spirito Santo che scenderà su di voi, e di me sarete testimoni a Gerusalemme, in tutta la Giudea e la Samaria e fino ai confini della terra\". Detto questo, mentre lo guardavano, fu elevato in alto e una nube lo sottrasse ai loro occhi. Essi stavano fissando il cielo mentre egli se ne andava, quand'ecco due uomini in bianche vesti si presentarono a loro e dissero: \"Uomini di Galilea, perché state a guardare il cielo? Questo Gesù, che di mezzo a voi è stato assunto in cielo, verrà allo stesso modo in cui l'avete visto andare in cielo\".", audio: "audio/Gl2_At 1_6-11.mp3" },
+                    { sub: "3. Atti 2,12-28", text: "Tutti erano stupefatti e perplessi, e si chiedevano l'un l'altro: \"Che cosa significa questo?\". Altri invece li deridevano e dicevano: \"Si sono ubriacati di vino dolce\". Allora Pietro con gli Undici si alzò in piedi e a voce alta parlò a loro così: \"Uomini di Giudea, e voi tutti abitanti di Gerusalemme, vi sia noto questo e fate attenzione alle mie parole. Questi uomini non sono ubriachi, come voi supponete: sono infatti le nove del mattino; accade invece quello che fu detto per mezzo del profeta Gioele: Avverrà: negli ultimi giorni - dice Dio - su tutti effonderò il mio Spirito; i vostri figli e le vostre figlie profeteranno, i vostri giovani avranno visioni e i vostri anziani faranno sogni. E anche sui miei servi e sulle mie serve in quei giorni effonderò il mio Spirito ed essi profeteranno. Farò prodigi lassù nel cielo e segni quaggiù sulla terra, sangue, fuoco e nuvole di fumo. Il sole si muterà in tenebra e la luna in sangue, prima che giunga il giorno del Signore, giorno grande e glorioso. E avverrà: chiunque invocherà il nome del Signore sarà salvato. Uomini d'Israele, ascoltate queste parole: Gesù di Nazareth - uomo accreditato da Dio presso di voi per mezzo di miracoli, prodigi e segni, che Dio stesso fece tra voi per opera sua, come voi sapete bene -, consegnato a voi secondo il prestabilito disegno e la prescienza di Dio, voi, per mano di pagani, l'avete crocifisso e l'avete ucciso. Ora Dio lo ha risuscitato, liberandolo dai dolori della morte, perché non era possibile che questa lo tenesse in suo potere. Dice infatti Davide a suo riguardo: Contemplavo sempre il Signore innanzi a me; egli sta alla mia destra, perché io non vacilli. Per questo si rallegrò il mio cuore ed esultò la mia lingua, e anche la mia carne riposerà nella speranza, perché tu non abbandonerai la mia vita negli inferi né permetterai che il tuo Santo subisca la corruzione. Mi hai fatto conoscere le vie della vita, mi colmerai di gioia con la tua presenza.", audio: "audio/Gl3_At 2_12-28.mp3" },
+                    { sub: "4. Luca 1,46-50", text: "L'anima mia magnifica il Signore e il mio spirito esulta in Dio, mio salvatore, perché ha guardato l'umiltà della sua serva. D'ora in poi tutte le generazioni mi chiameranno beata. Grandi cose ha fatto in me l'Onnipotente e Santo è il suo nome: di generazione in generazione la sua misericordia si stende su quelli che lo temono.", audio: "audio/Gl4_Lc 1_46-50.mp3" },
+                    { sub: "5. Apocalisse 12,1-6", text: "Un segno grandioso apparve nel cielo: una donna vestita di sole, con la luna sotto i suoi piedi e, sul capo, una corona di dodici stelle. Era incinta, e gridava per le doglie e il travaglio del parto. Allora apparve un altro segno nel cielo: un enorme drago rosso, con sette teste e dieci corna e sulle teste sette diademi; la sua coda trascinava un terzo delle stelle del cielo e le precipitava sulla terra. Il drago si pose davanti alla donna, che stava per partorire, in modo da divorare il bambino appena lo avesse partorito. Essa partorì un figlio maschio, destinato a governare tutte le nazioni con scettro di ferro, e suo figlio fu rapito verso Dio e verso il suo trono. La donna invece fuggì nel deserto, dove Dio le aveva preparato un rifugio perché vi fosse nutrita per milleduecentosessanta giorni.", audio: "audio/Gl5_Ap 12_1-6.mp3" }
+                ]
+            },
+            luminosi: {
+                title: "Misteri Luminosi",
+                mysteries: [
+                    { sub: "1. Marco 1,4-11", text: "(...) vi fu Giovanni, che battezzava nel deserto e proclamava un battesimo di conversione per il perdono dei peccati. Accorrevano a lui tutta la regione della Giudea e tutti gli abitanti di Gerusalemme. E si facevano battezzare da lui nel fiume Giordano, confessando i loro peccati. Giovanni era vestito di peli di cammello, con una cintura di pelle attorno ai fianchi, e mangiava cavallette e miele selvatico. E proclamava: \"Viene dopo di me colui che è più forte di me: io non sono degno di chinarmi per slegare i lacci dei suoi sandali. Io vi ho battezzato con acqua, ma egli vi battezzerà in Spirito Santo\". Ed ecco, in quei giorni, Gesù venne da Nazareth di Galilea e fu battezzato nel Giordano da Giovanni. E subito, uscendo dall'acqua, vide squarciarsi i cieli e lo Spirito discendere verso di lui come una colomba. E venne una voce dal cielo: \"Tu sei il Figlio mio, l'amato: in te ho posto il mio compiacimento\".", audio: "audio/Lu1_Mc 1_4-11.mp3" },
+                    { sub: "2. Giovanni 2,1-10", text: "Il terzo giorno vi fu una festa di nozze a Cana di Galilea e c'era la madre di Gesù. Fu invitato alle nozze anche Gesù con i suoi discepoli. Venuto a mancare il vino, la madre di Gesù gli disse: \"Non hanno vino\". E Gesù le rispose: \"Donna, che vuoi da me? Non è ancora giunta la mia ora\". Sua madre disse ai servitori: \"Qualsiasi cosa vi dica, fatela\". Vi erano là sei anfore di pietra per la purificazione rituale dei Giudei, contenenti ciascuna da ottanta a centoventi litri. E Gesù disse loro: \"Riempite d'acqua le anfore\"; e le riempirono fino all'orlo. Disse loro di nuovo: \"Ora prendetene e portatene a colui che dirige il banchetto\". Ed essi gliene portarono. Come ebbe assaggiato l'acqua diventata vino, colui che dirigeva il banchetto - il quale non sapeva da dove venisse, ma lo sapevano i servitori che avevano preso l'acqua - chiamò lo sposo e gli disse: \"Tutti mettono in tavola il vino buono all'inizio e, quando si è già bevuto molto, quello meno buono. Tu invece hai tenuto da parte il vino buono finora\".", audio: "audio/Lu2_Gv 2_1-10.mp3" },
+                    { sub: "3. Marco 1,14-20", text: "Dopo che Giovanni fu arrestato, Gesù andò nella Galilea, proclamando il vangelo di Dio, e diceva: \"Il tempo è compiuto e il regno di Dio è vicino; convertitevi e credete nel Vangelo\". Passando lungo il mare di Galilea, vide Simone e Andrea, fratello di Simone, mentre gettavano le reti in mare; erano infatti pescatori. Gesù disse loro: \"Venite dietro a me, vi farò diventare pescatori di uomini\". E subito lasciarono le reti e lo seguirono. Andando un poco oltre, vide Giacomo, figlio di Zebedeo, e Giovanni suo fratello, mentre anch'essi nella barca riparavano le reti. E subito li chiamò. Ed essi lasciarono il loro padre Zebedeo nella barca con i garzoni e andarono dietro a lui.", audio: "audio/Lu3_Mc 1_14-20.mp3" },
+                    { sub: "4. Marco 9,1-8", text: "Diceva loro: \"In verità io vi dico: vi sono alcuni, qui presenti, che non morranno prima di aver visto giungere il regno di Dio nella sua potenza\". Sei giorni dopo, Gesù prese con sé Pietro, Giacomo e Giovanni e li condusse su un alto monte, in disparte, loro soli. Fu trasfigurato davanti a loro e le sue vesti divennero splendenti, bianchissime: nessun lavandaio sulla terra potrebbe renderle così bianche. E apparve loro Elia con Mosè e conversavano con Gesù. Prendendo la parola, Pietro disse a Gesù: \"Rabbì, è bello per noi essere qui; facciamo tre capanne, una per te, una per Mosè e una per Elia\". Non sapeva infatti che cosa dire, perché erano spaventati. Venne una nube che li coprì con la sua ombra e dalla nube uscì una voce: \"Questi è il Figlio mio, l'amato: ascoltatelo!\". E improvvisamente, guardandosi attorno, non videro più nessuno, se non Gesù solo, con loro.", audio: "audio/Lu4_Mc 9_1-8.mp3" },
+                    { sub: "5. Matteo 26,17-19.26-28", text: "Il primo giorno degli Azzimi, i discepoli si avvicinarono a Gesù e gli dissero: \"Dove vuoi che prepariamo per te, perché tu possa mangiare la Pasqua?\". Ed egli rispose: \"Andate in città da un tale e ditegli: \"Il Maestro dice: Il mio tempo è vicino; farò la Pasqua da te con i miei discepoli\"\". I discepoli fecero come aveva loro ordinato Gesù, e prepararono la Pasqua. Ora, mentre mangiavano, Gesù prese il pane, recitò la benedizione, lo spezzò e, mentre lo dava ai discepoli, disse: \"Prendete, mangiate: questo è il mio corpo\". Poi prese il calice, rese grazie e lo diede loro, dicendo: \"Bevetene tutti, perché questo è il mio sangue dell'alleanza, che è versato per molti per il perdono dei peccati.”", audio: "audio/Lu5_Mt 26_17-19.26-28.mp3" }
+                ]
+            }
+        };
 
-  <script>
-    window.addEventListener("error", (event) => {
-      const box = document.getElementById("errorbox");
-      box.style.display = "block";
-      box.textContent = "Errore JavaScript nel file:
-" + event.message + (event.lineno ? `
-Linea: ${event.lineno}` : "");
-      document.getElementById("title").textContent = "Errore di caricamento";
-    });
+        // Mappatura Giorni: 0=Domenica, 1=Lunedì, ... 6=Sabato
+        const dayMap = {
+            1: 'gaudiosi', 6: 'gaudiosi', // Lun, Sab
+            2: 'dolorosi', 5: 'dolorosi', // Mar, Ven
+            3: 'gloriosi', 0: 'gloriosi', // Mer, Dom
+            4: 'luminosi'                 // Gio
+        };
 
-    const DAY_NAMES = [
-      "Domenica", "Lunedì", "Martedì", "Mercoledì",
-      "Giovedì", "Venerdì", "Sabato"
-    ];
+        const today = new Date().getDay();
+        const activeMysteryKey = dayMap[today];
+        const activeData = rosarioData[activeMysteryKey];
 
-    const DAY_TO_GROUP = [3, 1, 2, 3, 4, 2, 1];
+        document.getElementById('day-subtitle').textContent = activeData.title;
 
-    const GROUP_LABEL = {
-      1: "Misteri Gaudiosi",
-      2: "Misteri Dolorosi",
-      3: "Misteri Gloriosi",
-      4: "Misteri Luminosi"
-    };
+        const contentDiv = document.getElementById('content');
+        let currentAudio = null;
+        let currentBtn = null;
 
-    const CONTENT = {
-      1: [
-        {
-          title: "1. Luca 1,28-34",
-          text: `Entrando da lei, disse: "Rallégrati, piena di grazia: il Signore è con te". A queste parole ella fu molto turbata e si domandava che senso avesse un saluto come questo. L'angelo le disse: "Non temere, Maria, perché hai trovato grazia presso Dio. Ed ecco, concepirai un figlio, lo darai alla luce e lo chiamerai Gesù. Sarà grande e verrà chiamato Figlio dell'Altissimo; il Signore Dio gli darà il trono di Davide suo padre e regnerà per sempre sulla casa di Giacobbe e il suo regno non avrà fine”. Allora Maria disse all'angelo: "Come avverrà questo, poiché non conosco uomo?".`,
-          audio: "Ga1_Lc 1_28-34.mp3"
-        },
-        {
-          title: "2. Luca 1,38-43",
-          text: `Allora Maria disse: "Ecco la serva del Signore: avvenga per me secondo la tua parola". E l'angelo si allontanò da lei. In quei giorni Maria si alzò e andò in fretta verso la regione montuosa, in una città di Giuda. Entrata nella casa di Zaccaria, salutò Elisabetta. Appena Elisabetta ebbe udito il saluto di Maria, il bambino sussultò nel suo grembo. Elisabetta fu colmata di Spirito Santo ed esclamò a gran voce: “Benedetta tu fra le donne e benedetto il frutto del tuo grembo! A che cosa devo che la madre del mio Signore venga da me?”.`,
-          audio: "Ga2_Lc 1_38-43.mp3"
-        },
-        {
-          title: "3. Luca 2,7-20",
-          text: `(Maria) Diede alla luce il suo figlio primogenito, lo avvolse in fasce e lo pose in una mangiatoia, perché per loro non c'era posto nell'alloggio. C'erano in quella regione alcuni pastori che, pernottando all'aperto, vegliavano tutta la notte facendo la guardia al loro gregge. Un angelo del Signore si presentò a loro e la gloria del Signore li avvolse di luce. Essi furono presi da grande timore, ma l'angelo disse loro: "Non temete: ecco, vi annuncio una grande gioia, che sarà di tutto il popolo: oggi, nella città di Davide, è nato per voi un Salvatore, che è Cristo Signore. Questo per voi il segno: troverete un bambino avvolto in fasce, adagiato in una mangiatoia". E subito apparve con l'angelo una moltitudine dell'esercito celeste, che lodava Dio e diceva: "Gloria a Dio nel più alto dei cieli e sulla terra pace agli uomini, che egli ama". Appena gli angeli si furono allontanati da loro, verso il cielo, i pastori dicevano l'un l'altro: "Andiamo dunque fino a Betlemme, vediamo questo avvenimento che il Signore ci ha fatto conoscere". Andarono, senza indugio, e trovarono Maria e Giuseppe e il bambino, adagiato nella mangiatoia. E dopo averlo visto, riferirono ciò che del bambino era stato detto loro. Tutti quelli che udivano si stupirono delle cose dette loro dai pastori. Maria, da parte sua, custodiva tutte queste cose, meditandole nel suo cuore. I pastori se ne tornarono, glorificando e lodando Dio per tutto quello che avevano udito e visto, com'era stato detto loro.`,
-          audio: "Ga3_Lc 2_7-20.mp3"
-        },
-        {
-          title: "4. Luca 2,25-30",
-          text: `Ora a Gerusalemme c'era un uomo di nome Simeone, uomo giusto e pio, che aspettava la consolazione d'Israele, e lo Spirito Santo era su di lui. Lo Spirito Santo gli aveva preannunciato che non avrebbe visto la morte senza prima aver veduto il Cristo del Signore. Mosso dallo Spirito, (Simeone) si recò al tempio e, mentre i genitori vi portavano il Bambino Gesù per fare ciò che la Legge prescriveva a suo riguardo, anch'egli lo accolse tra le braccia e benedisse Dio, dicendo: "Ora lascia, o Signore, che il tuo servo vada in pace, secondo la tua parola, perché i miei occhi hanno visto la tua salvezza”.`,
-          audio: "Ga4_Lc 2_25-30.mp3"
-        },
-        {
-          title: "5. Luca 2,45-49",
-          text: `Non avendolo trovato, tornarono in cerca di lui a Gerusalemme. Dopo tre giorni lo trovarono nel tempio, seduto in mezzo ai maestri, mentre li ascoltava e li interrogava. E tutti quelli che l'udivano erano pieni di stupore per la sua intelligenza e le sue risposte. Al vederlo restarono stupiti, e sua madre gli disse: "Figlio, perché ci hai fatto questo? Ecco, tuo padre e io, angosciati, ti cercavamo". Ed egli rispose loro: "Perché mi cercavate? Non sapevate che io devo occuparmi delle cose del Padre mio?".`,
-          audio: "Ga5_Lc 2_45-49.mp3"
-        }
-      ],
-      2: [
-        {
-          title: "1. Luca 22,39-46",
-          text: `Uscì e andò, come al solito, al monte degli Ulivi; anche i discepoli lo seguirono. Giunto sul luogo, disse loro: "Pregate, per non entrare in tentazione". Poi si allontanò da loro circa un tiro di sasso, cadde in ginocchio e pregava dicendo: "Padre, se vuoi, allontana da me questo calice! Tuttavia non sia fatta la mia, ma la tua volontà". Gli apparve allora un angelo dal cielo per confortarlo. Entrato nella lotta, pregava più intensamente, e il suo sudore diventò come gocce di sangue che cadono a terra. Poi, rialzatosi dalla preghiera, andò dai discepoli e li trovò che dormivano per la tristezza. E disse loro: "Perché dormite? Alzatevi e pregate, per non entrare in tentazione".`,
-          audio: "Do1_Lc 22_39-46.mp3"
-        },
-        {
-          title: "2. Giovanni 18,33-40; 19,1",
-          text: `Pilato allora rientrò nel pretorio, fece chiamare Gesù e gli disse: "Sei tu il re dei Giudei?". Gesù rispose: "Dici questo da te, oppure altri ti hanno parlato di me?". Pilato disse: "Sono forse io Giudeo? La tua gente e i capi dei sacerdoti ti hanno consegnato a me. Che cosa hai fatto?". Rispose Gesù: "Il mio regno non è di questo mondo; se il mio regno fosse di questo mondo, i miei servitori avrebbero combattuto perché non fossi consegnato ai Giudei; ma il mio regno non è di quaggiù". Allora Pilato gli disse: "Dunque tu sei re?". Rispose Gesù: "Tu lo dici: io sono re. Per questo io sono nato e per questo sono venuto nel mondo: per dare testimonianza alla verità. Chiunque è dalla verità, ascolta la mia voce". Gli dice Pilato: "Che cos'è la verità?". E, detto questo, uscì di nuovo verso i Giudei e disse loro: "Io non trovo in lui colpa alcuna. Vi è tra voi l'usanza che, in occasione della Pasqua, io rimetta uno in libertà per voi: volete dunque che io rimetta in libertà per voi il re dei Giudei?". Allora essi gridarono di nuovo: "Non costui, ma Barabba!". Barabba era un brigante. Pilato allora fece prendere Gesù e lo fece flagellare.",
-          audio: "Do2_Gv 18_33-40_19_1.mp3"
-        },
-        {
-          title: "3. Giovanni 19,2-6",
-          text: `I soldati intrecciarono una corona di spine, gliela posero sul capo e gli misero addosso un mantello di porpora. Poi gli si avvicinavano e dicevano: "Salve, re dei Giudei!". E gli davano schiaffi. Pilato uscì fuori di nuovo e disse loro: "Ecco, io ve lo conduco fuori, perché sappiate che non trovo in lui colpa alcuna". Allora Gesù uscì, portando la corona di spine e il mantello di porpora. E Pilato disse loro: "Ecco l'uomo!".",
-          audio: "Do3_Gv 19_2-6.mp3"
-        },
-        {
-          title: "4. Luca 23,20-26",
-          text: `Pilato parlò loro di nuovo, perché voleva rimettere in libertà Gesù. Ma essi urlavano: "Crocifiggilo! Crocifiggilo!". Ed egli, per la terza volta, disse loro: "Ma che male ha fatto costui? Non ho trovato in lui nulla che meriti la morte. Dunque, lo punirò e lo rimetterò in libertà". Essi però insistevano a gran voce, chiedendo che venisse crocifisso, e le loro grida crescevano. Pilato allora decise che la loro richiesta venisse eseguita. Rimise in libertà colui che era stato messo in prigione per rivolta e omicidio, e che essi richiedevano, e consegnò Gesù al loro volere. Mentre lo conducevano via, fermarono un certo Simone di Cirene, che tornava dai campi, e gli misero addosso la croce, da portare dietro a Gesù.",
-          audio: "Do4_Lc 23_20-26.mp3"
-        },
-        {
-          title: "5. Luca 23,39-46",
-          text: `Uno dei malfattori appesi alla croce lo insultava: "Non sei tu il Cristo? Salva te stesso e noi!". L'altro invece lo rimproverava dicendo: "Non hai alcun timore di Dio, tu che sei condannato alla stessa pena? Noi, giustamente, perché riceviamo quello che abbiamo meritato per le nostre azioni; egli invece non ha fatto nulla di male". E disse: "Gesù, ricordati di me quando entrerai nel tuo regno". Gli rispose: "In verità io ti dico: oggi con me sarai nel paradiso". Era già verso mezzogiorno e si fece buio su tutta la terra fino alle tre del pomeriggio, perché il sole si era eclissato. Il velo del tempio si squarciò a metà. Gesù, gridando a gran voce, disse: "Padre, nelle tue mani consegno il mio spirito". Detto questo, spirò.",
-          audio: "Do5_Lc 23_39-46.mp3"
-        }
-      ],
-      3: [
-        {
-          title: "1. Giovanni 20,11-18",
-          text: `Maria invece stava all'esterno, vicino al sepolcro, e piangeva. Mentre piangeva, si chinò verso il sepolcro e vide due angeli in bianche vesti, seduti l'uno dalla parte del capo e l'altro dei piedi, dove era stato posto il corpo di Gesù. Ed essi le dissero: "Donna, perché piangi?". Rispose loro: "Hanno portato via il mio Signore e non so dove l'hanno posto". Detto questo, si voltò indietro e vide Gesù, in piedi; ma non sapeva che fosse Gesù. Le disse Gesù: "Donna, perché piangi? Chi cerchi?". Ella, pensando che fosse il custode del giardino, gli disse: "Signore, se l'hai portato via tu, dimmi dove l'hai posto e io andrò a prenderlo". Gesù le disse: "Maria!". Ella si voltò e gli disse in ebraico: "Rabbunì!" - che significa: "Maestro!". Gesù le disse: "Non mi trattenere, perché non sono ancora salito al Padre; ma va' dai miei fratelli e di' loro: \"Salgo al Padre mio e Padre vostro, Dio mio e Dio vostro\". Maria di Màgdala andò ad annunciare ai discepoli: "Ho visto il Signore!" e ciò che le aveva detto.",
-          audio: "Gl1_Gv 20_11-18.mp3"
-        },
-        {
-          title: "2. Atti 1,6-11",
-          text: `Quelli dunque che erano con lui gli domandavano: "Signore, è questo il tempo nel quale ricostituirai il regno per Israele?". Ma egli rispose: "Non spetta a voi conoscere tempi o momenti che il Padre ha riservato al suo potere, ma riceverete la forza dallo Spirito Santo che scenderà su di voi, e di me sarete testimoni a Gerusalemme, in tutta la Giudea e la Samaria e fino ai confini della terra". Detto questo, mentre lo guardavano, fu elevato in alto e una nube lo sottrasse ai loro occhi. Essi stavano fissando il cielo mentre egli se ne andava, quand'ecco due uomini in bianche vesti si presentarono a loro e dissero: "Uomini di Galilea, perché state a guardare il cielo? Questo Gesù, che di mezzo a voi è stato assunto in cielo, verrà allo stesso modo in cui l'avete visto andare in cielo".",
-          audio: "Gl2_At 1_6-11.mp3"
-        },
-        {
-          title: "3. Atti 2,12-28",
-          text: `Tutti erano stupefatti e perplessi, e si chiedevano l'un l'altro: "Che cosa significa questo?". Altri invece li deridevano e dicevano: "Si sono ubriacati di vino dolce". Allora Pietro con gli Undici si alzò in piedi e a voce alta parlò a loro così: "Uomini di Giudea, e voi tutti abitanti di Gerusalemme, vi sia noto questo e fate attenzione alle mie parole. Questi uomini non sono ubriachi, come voi supponete: sono infatti le nove del mattino; accade invece quello che fu detto per mezzo del profeta Gioele: Avverrà: negli ultimi giorni - dice Dio - su tutti effonderò il mio Spirito; i vostri figli e le vostre figlie profeteranno, i vostri giovani avranno visioni e i vostri anziani faranno sogni. E anche sui miei servi e sulle mie serve in quei giorni effonderò il mio Spirito ed essi profeteranno. Farò prodigi lassù nel cielo e segni quaggiù sulla terra, sangue, fuoco e nuvole di fumo. Il sole si muterà in tenebra e la luna in sangue, prima che giunga il giorno del Signore, giorno grande e glorioso. E avverrà: chiunque invocherà il nome del Signore sarà salvato. Uomini d'Israele, ascoltate queste parole: Gesù di Nazareth - uomo accreditato da Dio presso di voi per mezzo di miracoli, prodigi e segni, che Dio stesso fece tra voi per opera sua, come voi sapete bene -, consegnato a voi secondo il prestabilito disegno e la prescienza di Dio, voi, per mano di pagani, l'avete crocifisso e l'avete ucciso. Ora Dio lo ha risuscitato, liberandolo dai dolori della morte, perché non era possibile che questa lo tenesse in suo potere. Dice infatti Davide a suo riguardo: Contemplavo sempre il Signore innanzi a me; egli sta alla mia destra, perché io non vacilli. Per questo si rallegrò il mio cuore ed esultò la mia lingua, e anche la mia carne riposerà nella speranza, perché tu non abbandonerai la mia vita negli inferi né permetterai che il tuo Santo subisca la corruzione. Mi hai fatto conoscere le vie della vita, mi colmerai di gioia con la tua presenza.",
-          audio: "Gl3_At 2_12-28.mp3"
-        },
-        {
-          title: "4. Luca 1,46-50",
-          text: `L'anima mia magnifica il Signore e il mio spirito esulta in Dio, mio salvatore, perché ha guardato l'umiltà della sua serva. D'ora in poi tutte le generazioni mi chiameranno beata. Grandi cose ha fatto in me l'Onnipotente e Santo è il suo nome: di generazione in generazione la sua misericordia si stende su quelli che lo temono.",
-          audio: "Gl4_Lc 1_46-50.mp3"
-        },
-        {
-          title: "5. Apocalisse 12,1-6",
-          text: `Un segno grandioso apparve nel cielo: una donna vestita di sole, con la luna sotto i suoi piedi e, sul capo, una corona di dodici stelle. Era incinta, e gridava per le doglie e il travaglio del parto. Allora apparve un altro segno nel cielo: un enorme drago rosso, con sette teste e dieci corna e sulle teste sette diademi; la sua coda trascinava un terzo delle stelle del cielo e le precipitava sulla terra. Il drago si pose davanti alla donna, che stava per partorire, in modo da divorare il bambino appena lo avesse partorito. Essa partorì un figlio maschio, destinato a governare tutte le nazioni con scettro di ferro, e suo figlio fu rapito verso Dio e verso il suo trono. La donna invece fuggì nel deserto, dove Dio le aveva preparato un rifugio perché vi fosse nutrita per milleduecentosessanta giorni.",
-          audio: "Gl5_Ap 12_1-6.mp3"
-        }
-      ],
-      4: [
-        {
-          title: "1. Marco 1,4-11",
-          text: `(...) vi fu Giovanni, che battezzava nel deserto e proclamava un battesimo di conversione per il perdono dei peccati. Accorrevano a lui tutta la regione della Giudea e tutti gli abitanti di Gerusalemme. E si facevano battezzare da lui nel fiume Giordano, confessando i loro peccati. Giovanni era vestito di peli di cammello, con una cintura di pelle attorno ai fianchi, e mangiava cavallette e miele selvatico. E proclamava: "Viene dopo di me colui che è più forte di me: io non sono degno di chinarmi per slegare i lacci dei suoi sandali. Io vi ho battezzato con acqua, ma egli vi battezzerà in Spirito Santo". Ed ecco, in quei giorni, Gesù venne da Nazareth di Galilea e fu battezzato nel Giordano da Giovanni. E subito, uscendo dall'acqua, vide squarciarsi i cieli e lo Spirito discendere verso di lui come una colomba. E venne una voce dal cielo: "Tu sei il Figlio mio, l'amato: in te ho posto il mio compiacimento".",
-          audio: "Lu1_Mc 1_4-11.mp3"
-        },
-        {
-          title: "2. Giovanni 2,1-10",
-          text: `Il terzo giorno vi fu una festa di nozze a Cana di Galilea e c'era la madre di Gesù. Fu invitato alle nozze anche Gesù con i suoi discepoli. Venuto a mancare il vino, la madre di Gesù gli disse: "Non hanno vino". E Gesù le rispose: "Donna, che vuoi da me? Non è ancora giunta la mia ora". Sua madre disse ai servitori: "Qualsiasi cosa vi dica, fatela". Vi erano là sei anfore di pietra per la purificazione rituale dei Giudei, contenenti ciascuna da ottanta a centoventi litri. E Gesù disse loro: "Riempite d'acqua le anfore"; e le riempirono fino all'orlo. Disse loro di nuovo: "Ora prendetene e portatene a colui che dirige il banchetto". Ed essi gliene portarono. Come ebbe assaggiato l'acqua diventata vino, colui che dirigeva il banchetto - il quale non sapeva da dove venisse, ma lo sapevano i servitori che avevano preso l'acqua - chiamò lo sposo e gli disse: "Tutti mettono in tavola il vino buono all'inizio e, quando si è già bevuto molto, quello meno buono. Tu invece hai tenuto da parte il vino buono finora".",
-          audio: "Lu2_Gv 2_1-10.mp3"
-        },
-        {
-          title: "3. Marco 1,14-20",
-          text: `Dopo che Giovanni fu arrestato, Gesù andò nella Galilea, proclamando il vangelo di Dio, e diceva: "Il tempo è compiuto e il regno di Dio è vicino; convertitevi e credete nel Vangelo". Passando lungo il mare di Galilea, vide Simone e Andrea, fratello di Simone, mentre gettavano le reti in mare; erano infatti pescatori. Gesù disse loro: "Venite dietro a me, vi farò diventare pescatori di uomini". E subito lasciarono le reti e lo seguirono. Andando un poco oltre, vide Giacomo, figlio di Zebedeo, e Giovanni suo fratello, mentre anch'essi nella barca riparavano le reti. E subito li chiamò. Ed essi lasciarono il loro padre Zebedeo nella barca con i garzoni e andarono dietro a lui.",
-          audio: "Lu3_Mc 1_14-20.mp3"
-        },
-        {
-          title: "4. Marco 9,1-8",
-          text: `Diceva loro: "In verità io vi dico: vi sono alcuni, qui presenti, che non morranno prima di aver visto giungere il regno di Dio nella sua potenza". Sei giorni dopo, Gesù prese con sé Pietro, Giacomo e Giovanni e li condusse su un alto monte, in disparte, loro soli. Fu trasfigurato davanti a loro e le sue vesti divennero splendenti, bianchissime: nessun lavandaio sulla terra potrebbe renderle così bianche. E apparve loro Elia con Mosè e conversavano con Gesù. Prendendo la parola, Pietro disse a Gesù: "Rabbì, è bello per noi essere qui; facciamo tre capanne, una per te, una per Mosè e una per Elia". Non sapeva infatti che cosa dire, perché erano spaventati. Venne una nube che li coprì con la sua ombra e dalla nube uscì una voce: "Questi è il Figlio mio, l'amato: ascoltatelo!". E improvvisamente, guardandosi attorno, non videro più nessuno, se non Gesù solo, con loro.",
-          audio: "Lu4_Mc 9_1-8.mp3"
-        },
-        {
-          title: "5. Matteo 26,17-19.26-28",
-          text: `Il primo giorno degli Azzimi, i discepoli si avvicinarono a Gesù e gli dissero: "Dove vuoi che prepariamo per te, perché tu possa mangiare la Pasqua?". Ed egli rispose: "Andate in città da un tale e ditegli: "Il Maestro dice: Il mio tempo è vicino; farò la Pasqua da te con i miei discepoli"". I discepoli fecero come aveva loro ordinato Gesù, e prepararono la Pasqua. Ora, mentre mangiavano, Gesù prese il pane, recitò la benedizione, lo spezzò e, mentre lo dava ai discepoli, disse: "Prendete, mangiate: questo è il mio corpo". Poi prese il calice, rese grazie e lo diede loro, dicendo: "Bevetene tutti, perché questo è il mio sangue dell'alleanza, che è versato per molti per il perdono dei peccati."`,
-          audio: "Lu5_Mt 26_17-19.26-28.mp3"
-        }
-      ]
-    };
+        activeData.mysteries.forEach((mystery, index) => {
+            const card = document.createElement('article');
+            card.className = 'card';
+            
+            card.innerHTML = `
+                <h3 class="mystery-title">${mystery.sub}</h3>
+                <p class="mystery-text">${mystery.text}</p>
+                <button class="audio-btn" id="btn-${index}">
+                    <span class="icon">▶</span> Riproduci
+                </button>
+            `;
+            contentDiv.appendChild(card);
 
-    const cardsEl = document.getElementById("cards");
-    const titleEl = document.getElementById("title");
-    const metaEl = document.getElementById("meta");
-    const refreshBtn = document.getElementById("refreshBtn");
+            const btn = document.getElementById(`btn-${index}`);
+            let audioObj = new Audio(mystery.audio);
 
-    let currentAudio = null;
-    let currentButton = null;
-    let lastDateKey = "";
+            // Quando l'audio finisce naturalmente
+            audioObj.onended = () => {
+                btn.classList.remove('playing');
+                btn.innerHTML = '<span class="icon">▶</span> Riproduci';
+                currentAudio = null;
+                currentBtn = null;
+            };
 
-    const dateFormatter = new Intl.DateTimeFormat("it-IT", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    });
+            btn.addEventListener('click', () => {
+                // Se stiamo cliccando su un audio già in riproduzione
+                if (currentAudio === audioObj && !audioObj.paused) {
+                    audioObj.pause();
+                    btn.classList.remove('playing');
+                    btn.innerHTML = '<span class="icon">▶</span> Riproduci';
+                    return;
+                }
 
-    const fileUrl = (name) => `audio/${encodeURIComponent(name)}`;
+                // Ferma l'audio precedente se ne parte uno nuovo
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    if (currentBtn) {
+                        currentBtn.classList.remove('playing');
+                        currentBtn.innerHTML = '<span class="icon">▶</span> Riproduci';
+                    }
+                }
 
-    function setButtonState(button, playing) {
-      button.textContent = playing ? "❚❚ Pausa" : "▶︎ Audio";
-      button.setAttribute("aria-pressed", String(playing));
-    }
-
-    function stopOtherAudio() {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-      if (currentButton) {
-        setButtonState(currentButton, false);
-      }
-      currentAudio = null;
-      currentButton = null;
-    }
-
-    function makeAudioControl(src, index) {
-      const wrap = document.createElement("div");
-      wrap.className = "actions";
-
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "audio-btn";
-      btn.setAttribute("aria-label", `Riproduci audio del paragrafo ${index}`);
-      btn.setAttribute("aria-pressed", "false");
-      btn.textContent = "▶︎ Audio";
-
-      const audio = document.createElement("audio");
-      audio.preload = "none";
-      audio.src = src;
-
-      btn.addEventListener("click", async () => {
-        if (!audio.src) return;
-
-        if (currentAudio && currentAudio !== audio) {
-          stopOtherAudio();
-        }
-
-        try {
-          if (audio.paused) {
-            await audio.play();
-            currentAudio = audio;
-            currentButton = btn;
-            setButtonState(btn, true);
-          } else {
-            audio.pause();
-            setButtonState(btn, false);
-          }
-        } catch (err) {
-          console.error("Riproduzione audio fallita:", err);
-        }
-      });
-
-      audio.addEventListener("ended", () => {
-        if (currentAudio === audio) {
-          currentAudio = null;
-          currentButton = null;
-        }
-        setButtonState(btn, false);
-        audio.currentTime = 0;
-      });
-
-      wrap.appendChild(btn);
-      wrap.appendChild(audio);
-      return wrap;
-    }
-
-    function render() {
-      const now = new Date();
-      lastDateKey = now.toDateString();
-
-      const dayIndex = now.getDay();
-      const group = DAY_TO_GROUP[dayIndex];
-
-      titleEl.textContent = GROUP_LABEL[group];
-      metaEl.textContent = `${DAY_NAMES[dayIndex]} · ${dateFormatter.format(now)}`;
-
-      cardsEl.replaceChildren();
-      stopOtherAudio();
-
-      CONTENT[group].forEach((item, idx) => {
-        const card = document.createElement("article");
-        card.className = "card";
-
-        const h2 = document.createElement("h2");
-        h2.textContent = item.title;
-        card.appendChild(h2);
-
-        const p = document.createElement("p");
-        p.className = "paragraph";
-        p.textContent = item.text;
-        card.appendChild(p);
-
-        if (item.audio && item.audio.trim()) {
-          card.appendChild(makeAudioControl(fileUrl(item.audio), idx + 1));
-        }
-
-        cardsEl.appendChild(card);
-      });
-    }
-
-    function maybeRefresh() {
-      const key = new Date().toDateString();
-      if (key !== lastDateKey) render();
-    }
-
-    refreshBtn.addEventListener("click", render);
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) maybeRefresh();
-    });
-
-    setInterval(maybeRefresh, 60_000);
-    render();
-  </script>
+                // Avvia il nuovo audio
+                audioObj.play().catch(e => alert("File audio non trovato o bloccato dal browser."));
+                btn.classList.add('playing');
+                btn.innerHTML = '<span class="icon">⏸</span> Pausa';
+                
+                currentAudio = audioObj;
+                currentBtn = btn;
+            });
+        });
+    </script>
 </body>
 </html>
